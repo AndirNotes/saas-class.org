@@ -28,13 +28,14 @@ class Numeric
     
     def in(currency)
         singular_currency = currency.to_s.gsub( /s$/, '')        
-        self * @@currencies[singular_currency]
+        self / @@currencies[singular_currency]
     end   
     
 end
 
 puts 5.dollars.in(:euros)
 puts 10.euros.in(:rupees)
+puts 5.rupees.in(:yen)
 
 =begin
 b) Adapt your solution from HW 1 "palindromes" question so that instead of writing palindrome?
@@ -67,10 +68,28 @@ hashes (though it should not error).
 
 module Enumerable
     def palindrome?
-        super(self.join)
+        self.to_a == self.to_a.reverse
+    end
+end
+
+class NumberPalindromeGenerator
+    include Enumerable
+    
+    def initialize(r1, r2)
+        a = Range.new(r1, r2, true).to_a
+        
+        @array = a + [r2] + a.reverse
+    end
+    
+    def each
+        @array.each { |item| yield item }
     end
 end
 
 puts [].palindrome? # true
 puts [1,2,3,2,1].palindrome? # true
 puts [1,2,3,4,5].palindrome? # false
+puts (NumberPalindromeGenerator.new(1, 5)).palindrome? # true 
+puts (NumberPalindromeGenerator.new(1, 11)).palindrome? # true 
+puts (NumberPalindromeGenerator.new(11, 25)).palindrome? # true 
+puts( {"hello"=>"world"}.palindrome? ) # false, no error
